@@ -1,0 +1,175 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cloth-app
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloth-secret
+  namespace: cloth-app
+type: Opaque
+stringData:
+  JWT_SECRET: change_me_to_something_long
+  PAYPAL_CLIENT_ID: sb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+  namespace: cloth-app
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: cloth-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:6
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: data
+          mountPath: /data/db
+        readinessProbe:
+          exec:
+            command: ["mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests: { memory: "256Mi", cpu: "100m" }
+          limits: { memory: "512Mi", cpu: "500m" }
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: mongo-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+  namespace: cloth-app
+spec:
+  selector:
+    app: mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloth-backend
+  namespace: cloth-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloth-backend
+  template:
+    metadata:
+      labels:
+        app: cloth-backend
+    spec:
+      containers:
+      - name: backend
+        image: cloth-shop-backend-cloth:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo-service:27017/clothshop"
+        - name: PORT
+          value: "5000"
+        - name: NODE_ENV
+          value: "development"
+        envFrom:
+        - secretRef:
+            name: cloth-secret
+        readinessProbe:
+          httpGet:
+            path: /api
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        resources:
+          requests: { memory: "128Mi", cpu: "100m" }
+          limits: { memory: "512Mi", cpu: "500m" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-cloth
+  namespace: cloth-app
+spec:
+  selector:
+    app: cloth-backend
+  ports:
+  - port: 5000
+    targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloth-frontend
+  namespace: cloth-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cloth-frontend
+  template:
+    metadata:
+      labels:
+        app: cloth-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: cloth-shop-frontend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests: { memory: "64Mi", cpu: "50m" }
+          limits: { memory: "256Mi", cpu: "300m" }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-cloth
+  namespace: cloth-app
+spec:
+  selector:
+    app: cloth-frontend
+  ports:
+  - port: 80
+    targetPort: 80

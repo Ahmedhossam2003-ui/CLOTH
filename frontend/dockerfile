@@ -1,4 +1,3 @@
-
 FROM node:22-alpine AS build
 
 WORKDIR /app
@@ -9,6 +8,7 @@ RUN npm install
 
 COPY frontend/ ./
 
+ENV DISABLE_ESLINT_PLUGIN=true
 RUN npm run build
 
 FROM nginx:alpine

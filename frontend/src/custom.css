@@ -1,0 +1,87 @@
+:root { --brand: #6c5ce7; }
+
+.card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+  transition: transform .2s, box-shadow .2s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .12);
+}
+.btn { border-radius: 999px; }
+.form-control { border-radius: 999px; }
+
+.navbar,
+.bg-primary,
+.navbar.bg-primary {
+  background-color: #6c5ce7 !important;
+}
+.btn-primary { background-color: #6c5ce7; border-color: #6c5ce7; }
+.btn-primary:hover { background-color: #5a4bd1; border-color: #5a4bd1; }
+.btn-info { background-color: #a29bfe; border-color: #a29bfe; }
+a { color: #6c5ce7; }
+
+/* خلفية الصفحة */
+body { background-color: #f6f5ff; }
+
+/* navbar بتدرج لوني وظل */
+.navbar {
+  background: linear-gradient(135deg, #6c5ce7, #8e7cf8) !important;
+  box-shadow: 0 4px 20px rgba(108, 92, 231, .35);
+}
+.navbar-brand { font-weight: 700; letter-spacing: 2px; }
+
+/* العناوين */
+h1, h2, h3 { font-weight: 700; color: #2d2a4a; }
+
+/* صور المنتجات */
+.card img { border-radius: 12px; transition: transform .3s; }
+.card:hover img { transform: scale(1.03); }
+
+/* السعر */
+.card .h3, .card h3 { color: #6c5ce7; }
+
+/* الفوتر */
+footer { background: #2d2a4a; color: #fff; padding: 2rem 0; }
+
+.service-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .06);
+  transition: transform .2s;
+}
+.service-box:hover { transform: translateY(-4px); }
+
+.sale-card {
+  color: #fff;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .15);
+  transition: transform .2s;
+}
+.sale-card:hover { transform: translateY(-6px) scale(1.02); }
+.sale-card h2 { font-weight: 800; color: #fff; }
+.sale-timer {
+  background: #2d2a4a;
+  color: #fff;
+  padding: .35rem .9rem;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.category-tabs { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1rem 0; }
+.cat-btn {
+  border: 2px solid #6c5ce7;
+  background: #fff;
+  color: #6c5ce7;
+  padding: .4rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.cat-btn:hover, .cat-btn.active { background: #6c5ce7; color: #fff; }

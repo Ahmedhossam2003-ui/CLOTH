@@ -25,7 +25,7 @@ const CartScreen = () => {
 
   return (
     <>
-      <Meta title="Clothshop | Cart" />
+      <Meta title="ELHOSS CLOTHS | Cart" />
       <Link className="btn btn-light my-3" to="/">
         Go Home
       </Link>
