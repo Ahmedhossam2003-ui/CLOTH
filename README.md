@@ -1,79 +1,79 @@
-# clothshopp
+# ELHOSS CLOTHS
 
-Online Clothing Store using the MERN stack
+Online clothing store built with the **MERN stack**, containerized with **Docker**, deployed on **Kubernetes**, and automated with a **Jenkins** CI/CD pipeline.
 
-![screenshot](https://i.ibb.co/kDtJPNy/clothshop.png)
+![screenshot](docs/screenshot.png)
 
-## Features:
+> Based on the open-source clothshop project by Said Mounaim, extended with a new UI, new features, and a full DevOps setup.
+
+## Features
 
 - Product reviews and ratings
-- Product pagination
-- Product search feature
-- User profile with orders
-- Full featured shopping cart
-- Admin product management
-- Admin user management
-- Admin Order details page
-- Mark orders as delivered option
-- Checkout process (shipping, payment method, etc)
-- PayPal / credit card integration
-- Database seeder (products & users)
+- Product pagination and search
+- Category tabs (Hoodies / T-Shirts / Shoes)
+- Hot Sales section with live countdown
+- Services section with detail popups
+- Redesigned purple theme
+- User profile, cart, checkout, PayPal
+- Admin product, user and order management
+- Database seeder
 
-## Technology Stack:
+## Tech Stack
 
-- Node js
-- Express Js
-- MongoDB
-- JWT
-- React
-- React Bootstrap
-- Redux
-- React Paypal Button V2
+| Layer | Technology |
+|---|---|
+| Frontend | React, Redux, React Bootstrap |
+| Backend | Node.js, Express, JWT |
+| Database | MongoDB |
+| Containers | Docker, Docker Compose |
+| Orchestration | Kubernetes (minikube) |
+| CI/CD | Jenkins |
 
-## Usage
+## Run with Docker Compose
 
-### Env Variables
-
-Create a .env file in then root and add the following
+Create a `.env` file in the root:
 
 ```
-NODE_ENV = development
-PORT = 5000
-MONGO_URI = your mongodb uri
-JWT_SECRET = 'abc123'
-PAYPAL_CLIENT_ID = your paypal client id
+JWT_SECRET=change_me_to_something_long
+NODE_ENV=development
+PAYPAL_CLIENT_ID=sb
 ```
 
-## Install Dependencies
+Then:
 
-```
-npm install
-cd frontend
-npm install
-```
-
-### Run
-
-```
-# Run frontend (:3000) & backend (:5000)
-npm run dev
-
-# Run backend only
-npm run server
+```bash
+docker compose up --build -d
+docker compose exec backend-cloth node seeder.js
 ```
 
-### Seed Database
+Store: http://localhost
 
-You can use the following commands to seed the database with some sample users and products as well as destroy all data
+## Run on Kubernetes (minikube)
 
+```bash
+minikube start --driver=docker
+kubectl config current-context
+
+docker compose build
+minikube image load cloth-shop-frontend:latest
+minikube image load cloth-shop-backend-cloth:latest
+
+kubectl apply -f k8s/cloth.yaml
+kubectl exec -n cloth-app deploy/cloth-backend -- node seeder.js
+kubectl port-forward -n cloth-app svc/frontend-cloth 8080:80
 ```
-# Import data
-npm run data:import
 
-# Destroy data
-npm run data:destroy
-```
+Open http://localhost:8080
 
-- Version: 1.0.0
-- License: MIT
-- Author: Said Mounaim
+## CI/CD with Jenkins
+
+The pipeline: **Checkout** → **Build images** → **Push** → **Deploy** (`kubectl apply -f k8s/cloth.yaml` and wait for rollout).
+
+See the `Jenkinsfile` in the repo root.
+
+## Credits
+
+- Original project: Said Mounaim
+- Extended and deployed by: Ahmed Hossam
+
+License: MIT
